@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/go-ini/ini"
-
 	"github.com/qiniu/api.v7/auth/qbox"
 	"github.com/qiniu/api.v7/storage"
 )
@@ -40,11 +39,11 @@ func main() {
 		return
 	}
 	//配置文件
-	var AccessKey = config.AccessKey
-	var SecretKey = config.SecretKey
-	var Bucket = config.Bucket
-	var BucketPublic = config.BucketPublic
-	var BucketDomain = config.BucketDomain
+	AccessKey := config.AccessKey
+	SecretKey := config.SecretKey
+	Bucket := config.Bucket
+	BucketPublic := config.BucketPublic
+	BucketDomain := config.BucketDomain
 	//上传文件检测
 	localFile := flag.Arg(0)
 	localFileInfo, err := os.Stat(localFile)
