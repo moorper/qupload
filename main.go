@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"os/user"
@@ -26,16 +27,20 @@ type CFG struct {
 
 // RequestVersion 查看当前版本
 var RequestVersion bool
+
+// Section 区分不同的上传帐号
+var Section string
 var config CFG
 
 func init() {
 	flag.BoolVar(&RequestVersion, "v", false, "查看当前版本")
+	flag.StringVar(&Section, "s", "default", "上传的 Section 空间")
 	flag.Parse()
 	initConfig()
 }
 func main() {
 	if RequestVersion {
-		fmt.Println("v0.0.1")
+		fmt.Println("v0.0.2")
 		return
 	}
 	//配置文件
@@ -96,26 +101,39 @@ func show(key string, url string) {
 }
 
 func initConfig() {
-	currentUser, _ := user.Current()
-	homeDir := currentUser.HomeDir
-	configPath := filepath.Join(homeDir, "qupload.ini")
-
-	cfg, err := ini.Load(configPath)
-	if err != nil {
-		log.Fatalln(`
-配置文件解析错误
-在用户根目录下新建：qupload.ini
-配置如下：
+	var configDefault = `
+[default]	
 AccessKey = ***
 SecretKey = ***
 Bucket = bucket
 BucketPublic = true # bool
 BucketDomain = http://***
-			`)
+# 可不受限制的添加更多 Section 只需使用 qupload -s=other file.png 即可
+# [other]
+# AccessKey = ***
+# SecretKey = ***
+# Bucket = bucket
+# BucketPublic = true # bool
+# BucketDomain = http://***
+	`
+	currentUser, _ := user.Current()
+	homeDir := currentUser.HomeDir
+	quploadPath := filepath.Join(homeDir, ".qupload")
+	_, err := os.Stat(quploadPath)
+	if os.IsNotExist(err) {
+		os.Mkdir(quploadPath, 0711)
+	}
+	configPath := filepath.Join(quploadPath, "qupload.ini")
+
+	cfg, err := ini.Load(configPath)
+	if err != nil {
+		err = ioutil.WriteFile(configPath, []byte(configDefault), 0711)
+		log.Fatal(`初始化配置文件成功，请编辑配置文件：`, configPath)
 	}
 	config.BucketPublic = true
-	err = cfg.MapTo(&config)
+	_, err = cfg.GetSection(Section)
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalln("未找到指定的 Section")
 	}
+	cfg.Section(Section).MapTo(&config)
 }
