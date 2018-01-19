@@ -34,6 +34,9 @@ var Section string
 // Key 指定上传文件的Key
 var Key string
 
+// Prefix 文件前缀
+var Prefix string
+
 // config 解析配置文件
 var config CFG
 
@@ -41,6 +44,7 @@ func init() {
 	flag.BoolVar(&RequestVersion, "v", false, "查看当前版本")
 	flag.StringVar(&Section, "s", "default", "上传的 Section 空间")
 	flag.StringVar(&Key, "k", "", "指定上传文件的 key")
+	flag.StringVar(&Prefix, "p", "", "指定文件前缀")
 	flag.Parse()
 	initConfig()
 }
@@ -62,7 +66,7 @@ func main() {
 		log.Fatalln("no such file or directory")
 	}
 	if Key == "" {
-		Key = localFileInfo.Name()
+		Key = Prefix + localFileInfo.Name()
 	}
 	// 获取 Bucket 对应的 zone
 	BucketZone, err := storage.GetZone(AccessKey, Bucket)

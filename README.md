@@ -7,7 +7,7 @@
 `go install github.com/moorper/qupload`
 
 ## 使用
-`qupload [-k=key] [-s=section] file.png`
+`qupload [-k=key]or[-p=prefix] [-s=section] file.png`
 
 上传成功返回以下内容
 ```
@@ -16,7 +16,7 @@ url :  http://oph6h5t6t.bkt.clouddn.com/file.png
 markdown : ![upload.jpg](http://oph6h5t6t.bkt.clouddn.com/file.png)
 ```
 注：
-MacOS 可直接拖拽图片到控制台获取图片路径
+* MacOS 可直接拖拽图片到控制台获取图片路径
 
 ## 配置
 第一次运行会自动在 `~/.qupload/qupload.ini` 创建配置文件：
