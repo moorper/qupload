@@ -30,17 +30,23 @@ var RequestVersion bool
 
 // Section 区分不同的上传帐号
 var Section string
+
+// Key 指定上传文件的Key
+var Key string
+
+// config 解析配置文件
 var config CFG
 
 func init() {
 	flag.BoolVar(&RequestVersion, "v", false, "查看当前版本")
 	flag.StringVar(&Section, "s", "default", "上传的 Section 空间")
+	flag.StringVar(&Key, "k", "", "指定上传文件的 key")
 	flag.Parse()
 	initConfig()
 }
 func main() {
 	if RequestVersion {
-		fmt.Println("v0.0.2")
+		fmt.Println("v0.0.3")
 		return
 	}
 	//配置文件
@@ -55,7 +61,9 @@ func main() {
 	if err != nil || os.IsNotExist(err) {
 		log.Fatalln("no such file or directory")
 	}
-	var key = localFileInfo.Name()
+	if Key == "" {
+		Key = localFileInfo.Name()
+	}
 	// 获取 Bucket 对应的 zone
 	BucketZone, err := storage.GetZone(AccessKey, Bucket)
 	if err != nil {
@@ -79,7 +87,7 @@ func main() {
 	ret := storage.PutRet{}
 	// 可选配置
 	putExtra := storage.PutExtra{}
-	err = formUploader.PutFile(context.Background(), &ret, upToken, key, localFile, &putExtra)
+	err = formUploader.PutFile(context.Background(), &ret, upToken, Key, localFile, &putExtra)
 	if err != nil {
 		fmt.Println(err)
 		return
