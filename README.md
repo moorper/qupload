@@ -7,7 +7,17 @@
 `go install github.com/moorper/qupload`
 
 ## 使用
-`qupload [-k=key]or[-p=prefix] [-s=section] file.png`
+```shell
+qupload [option] file.png
+
+option:
+
+-k 设置文件上传名称
+-p 设置文件上传前缀，会拼接在当前的文件名前边，不能和 -k 命令同时使用
+-s 选择文件上传空间，为配置文件的 section
+-v 查看版本
+
+```
 
 上传成功返回以下内容
 ```
@@ -37,8 +47,8 @@ BucketDomain = http://***
 ```
 
 ## TODO
-* 本地记录上传文件
-* 免配置直接上传文件到 [https://sm.ms/](https://sm.ms/)
+- [ ] 本地记录上传文件
+- [ ] 免配置直接上传文件到 [https://sm.ms/](https://sm.ms/)
 
 ---
 
